@@ -25,27 +25,29 @@ if __name__ == '__main__':
 
         faces = face_cascade.detectMultiScale(colored_image, 1.1, 5) 
         for face_position in faces: 
-            (x,y,width,height) = face_position
-            cv2.rectangle(colored_image,(x,y),(x+width,y+height),parameters.Colors.Red,2) 
-            face_slot = colored_image[y:y+height, x:x+width] 
+            (face_x, face_y, face_width, face_height) = face_position
+            cv2.rectangle(colored_image,(face_x, face_y),(face_x + face_width, face_y + face_height), parameters.Colors.Red, 2) 
+            face_slot = colored_image[face_y:face_y + face_height, face_x:face_x + face_width] 
+            
             eyes = eye_cascade.detectMultiScale(face_slot,1.1,4) 
             noses = nose_cascade.detectMultiScale(face_slot,1.3,4)
 
             best_nose = filter_apply.select_best_nose_on_face(noses = noses)
-            best_eyes = filter_apply.select_best_eyes_on_face(eyes= eyes);
-
+            best_eyes = filter_apply.select_best_eyes_on_face(eyes= eyes)
+            # noseModified = filter_apply.apply_dog_nose(best_nose)
 
             for eye_position in best_eyes:
                 (eye_x,eye_y,eye_width,eye_height) = eye_position
                 
-                cv2.rectangle(face_slot,(eye_x ,eye_y),(eye_x +eye_width ,eye_y+eye_height),parameters.Colors.Blue,2) 
+                cv2.rectangle(colored_image,(face_x + eye_x ,face_y + eye_y),(face_x + eye_x +eye_width ,face_y + eye_y+eye_height),parameters.Colors.Blue,2) 
             
-            for nose_position in best_nose:
-                (nose_x,nose_y,nose_width,nose_height) = nose_position
-                cv2.rectangle(face_slot,(nose_x ,nose_y),(nose_x +nose_width ,nose_y+nose_height),parameters.Colors.Green,2) 
-
-            result = filter_apply.set_mask(face_slot, parameters.MaskTypes.Dog)
-        cv2.imshow('colored_image',result) 
+            try:
+                (nose_x,nose_y,nose_width,nose_height) = best_nose
+                cv2.rectangle(colored_image,(face_x + nose_x ,face_y + nose_y),(face_x + nose_x +nose_width , face_y + nose_y+nose_height),parameters.Colors.Green,2) 
+            except Exception as e:
+                pass
+            result = filter_apply.set_mask(colored_image, parameters.MaskTypes.Dog)
+        cv2.imshow('colored_image',colored_image) 
         cv2.waitKey(0)
 
 
