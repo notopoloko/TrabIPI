@@ -6,7 +6,7 @@ MASK_DIR = '../masks'
 class MasksPaths():
     Dog = MASK_DIR + '/dog/dog_mask.png'
     DogDarkBackground = MASK_DIR + '/dog/dog_mask_dark_background.png'
-    DogNose = MASK_DIR + '/dog/dog_nose.png'
+    DogNose = MASK_DIR + '/dog/dog_nose2.png'
     DogNoseDarkBackground = MASK_DIR + '/dog/dog_nose_dark_background.png'
     
 class Colors():
