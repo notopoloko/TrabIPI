@@ -6,7 +6,7 @@ import filters
 
 
 face_cascade = cv2.CascadeClassifier('../opencv/haarcascades/haarcascade_frontalface_default.xml')
-eye_cascade = cv2.CascadeClassifier('../opencv/haarcascades/haarcascade_eye.xml')
+eye_cascade = cv2.CascadeClassifier('../opencv/haarcascades/haarcascade_mcs_eyepair_big.xml')
 nose_cascade = cv2.CascadeClassifier('../opencv/haarcascades/haarcascade_mcs_nose.xml')
 
 
@@ -32,7 +32,10 @@ if __name__ == '__main__':
             eyes = eye_cascade.detectMultiScale(face_slot,1.1,4) 
             noses = nose_cascade.detectMultiScale(face_slot,1.3,4)
 
-            best_nose = filters.select_best_nose_on_face(noses = noses)
+            if len(noses) != 0:
+                best_nose = filters.select_best_nose_on_face(face_position,noses = noses)
+            else:
+                best_nose = None
             best_eyes = filters.select_best_eyes_on_face(eyes= eyes)
             # noseModified = filters.apply_dog_nose(best_nose)
 
@@ -40,6 +43,7 @@ if __name__ == '__main__':
                 (eye_x,eye_y,eye_width,eye_height) = eye_position
                 
                 cv2.rectangle(colored_image,(face_x + eye_x ,face_y + eye_y),(face_x + eye_x +eye_width ,face_y + eye_y+eye_height),parameters.Colors.Blue,2) 
+
             
             try:
                 (nose_x,nose_y,nose_width,nose_height) = best_nose
@@ -50,7 +54,13 @@ if __name__ == '__main__':
             cv2.imshow('colored_image',colored_image) 
             cv2.waitKey(0)  
             try:
-                result = filters.apply_dog_mask(colored_image, best_nose, face_position)
+                result = colored_image.copy()
+
+                # result = filters.apply_bread_face(result, face_position)
+                result = filters.apply_glass(result, eye_position, face_position)
+                result = filters.apply_dog_mask(result, best_nose, face_position)
+                
+
             except Exception as e:
                 print('deu ruim', e)
                 result =  colored_image
