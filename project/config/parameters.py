@@ -11,6 +11,8 @@ class MasksPaths():
     DogNoseDarkBackground = MASK_DIR + '/dog/dog_nose_dark_background.png'
     Glasses = MASK_DIR + '/glasses/glasses.png'
     BreadFace = MASK_DIR + '/bread/bread_face.png'
+    Flowers = MASK_DIR + '/flowers/flowers.png'
+    PinkGradient = MASK_DIR + '/flowers/pink_background.png'
     
 class Colors():
     Blue = (255,0,0)

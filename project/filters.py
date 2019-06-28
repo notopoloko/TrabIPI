@@ -58,22 +58,29 @@ def apply_glass(image, eye_position, face_position):
 
 
 
-def apply_bread_face(image,  face_position):
+def apply_flowers(image,  face_position):
     (face_x, face_y, face_width, face_height) = face_position
 
     result_image = image.copy()
 
-    dog_ears = cv2.imread(parameters.MasksPaths.BreadFace, cv2.IMREAD_COLOR)
+    flowers = cv2.imread(parameters.MasksPaths.Flowers, cv2.IMREAD_UNCHANGED)
+    pink_background = cv2.imread(parameters.MasksPaths.PinkGradient, cv2.IMREAD_COLOR)
 
-    reshaped_ears = cv2.resize(dog_ears, (face_width, face_height))
-        
+    print('teste')
+    reshaped_ears = cv2.resize(flowers, (face_width, face_height//2))
+    reshaped_pink_background = cv2.resize(pink_background,  (image.shape[1], image.shape[0]))
+       
+
+    result_image = cv2.addWeighted(result_image, 0.6, reshaped_pink_background, 0.4, 0)
+    
     # print(face_y)
     for channel in range(0,image.shape[-1]):
-        for row in range( 0,   face_height):
+        for row in range( 0,   face_height//2):
             for col in range(0, face_width ):
                 # # print('index {},{},{} \n'.format(row,col,channel))
-                if reshaped_ears[row][col][channel] < 240:
-                    result_image[face_y  + row ][face_x   + col ][channel] = reshaped_ears[row][col][channel]
+                if reshaped_ears[row][col][3] > 240:
+                    offset = face_height//6
+                    result_image[ max(face_y  + row - offset , 0) ][ max(face_x   + col , 0) ][channel] = reshaped_ears[row][col][channel]
                 else:
                     continue
 

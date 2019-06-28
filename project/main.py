@@ -14,7 +14,7 @@ if __name__ == '__main__':
 
     images_dataset = os.listdir(parameters.IMG_DIR)
 
-    for img in images_dataset[:]:
+    for img in images_dataset[:1]:
 
         img_full_name = parameters.IMG_DIR + img;
 
@@ -56,9 +56,9 @@ if __name__ == '__main__':
             try:
                 result = colored_image.copy()
 
-                # result = filters.apply_bread_face(result, face_position)
-                result = filters.apply_glass(result, eye_position, face_position)
-                result = filters.apply_dog_mask(result, best_nose, face_position)
+                result = filters.apply_flowers(result, face_position)
+                # result = filters.apply_glass(result, eye_position, face_position)
+                # result = filters.apply_dog_mask(result, best_nose, face_position)
                 
 
             except Exception as e:
