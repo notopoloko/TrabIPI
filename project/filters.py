@@ -10,6 +10,9 @@ def select_best_eyes_on_face(eyes):
     except Exception as e:
         return eyes
 
+def findBestTwoEyes (image_slot, eyes_cadidates):
+    return eyes_cadidates
+
 def select_best_nose_on_face(face_position,noses):
     best_nose = None
 
@@ -24,7 +27,6 @@ def select_best_nose_on_face(face_position,noses):
 
     nose_width = face_width //2
     print("face width {} nose width {}\n".format(face_width, nose_width))
-    
     nose_x = math.ceil(face_width*0.25)
 
     best_nose = [nose_x,nose_y,nose_width,nose_height]
@@ -58,18 +60,20 @@ def apply_glass(image, eye_position, face_position):
 
 
 
-def apply_flowers(image,  face_position):
+def apply_flowers(image,  face_position, angle = 0):
     (face_x, face_y, face_width, face_height) = face_position
 
     result_image = image.copy()
 
     flowers = cv2.imread(parameters.MasksPaths.Flowers, cv2.IMREAD_UNCHANGED)
     pink_background = cv2.imread(parameters.MasksPaths.PinkGradient, cv2.IMREAD_COLOR)
-
-    print('teste')
-    reshaped_ears = cv2.resize(flowers, (face_width, face_height//2))
+    
+    reshaped_flowers = cv2.resize(flowers, (face_width, face_height//2))
     reshaped_pink_background = cv2.resize(pink_background,  (image.shape[1], image.shape[0]))
        
+    rows, cols, _ = reshaped_flowers.shape
+    M = cv2.getRotationMatrix2D ((cols/2, rows/2), (-angle*180/math.pi)*0.85, 1)
+    reshaped_flowers = cv2.warpAffine(reshaped_flowers, M, (cols, rows))
 
     result_image = cv2.addWeighted(result_image, 0.6, reshaped_pink_background, 0.4, 0)
     
@@ -78,23 +82,23 @@ def apply_flowers(image,  face_position):
         for row in range( 0,   face_height//2):
             for col in range(0, face_width ):
                 # # print('index {},{},{} \n'.format(row,col,channel))
-                if reshaped_ears[row][col][3] > 240:
+                if reshaped_flowers[row][col][3] > 240:
                     offset = face_height//6
-                    result_image[ max(face_y  + row - offset , 0) ][ max(face_x   + col , 0) ][channel] = reshaped_ears[row][col][channel]
+                    result_image[ max(face_y  + row - offset , 0) ][ max(face_x   + col , 0) ][channel] = reshaped_flowers[row][col][channel]
                 else:
                     continue
 
     return result_image
 
 
-def apply_dog_mask(image, best_nose, face_position):
+def apply_dog_mask(image, best_nose, face_position, angle = 0):
     result_image = image.copy()
     try:
       result_image = _apply_dog_ears(result_image,  face_position)
     except Exception as e:
-        pass
+        print(e)
 
-    result_image = _apply_dog_nose(result_image, best_nose, face_position)
+    result_image = _apply_dog_nose(result_image, best_nose, face_position, angle)
 
     return result_image
 
@@ -105,8 +109,8 @@ def _apply_dog_ears(image,  face_position):
 
     result_image = image.copy()
 
-    dog_ears = cv2.imread(parameters.MasksPaths.DogEars, cv2.IMREAD_COLOR)
-
+    dog_ears = cv2.imread(parameters.MasksPaths.DogEars, cv2.IMREAD_UNCHANGED)
+    
     reshaped_ears = cv2.resize(dog_ears, (face_width, face_height//3 ))
         
     # print(face_y)
@@ -114,24 +118,28 @@ def _apply_dog_ears(image,  face_position):
         for row in range( 0,   face_height//3):
             for col in range(0, face_width ):
                 # # print('index {},{},{} \n'.format(row,col,channel))
-                if reshaped_ears[row][col][channel] < 250:
-                    result_image[math.ceil(face_y*0.83)  + row ][face_x   + col ][channel] = reshaped_ears[row][col][channel]
+                if reshaped_ears[row][col][3] >250:
+                    result_image[max(face_y  + row - (math.ceil(face_height*0.2)),0) ][max(face_x   + col ,0) ][channel] = reshaped_ears[row][col][channel]
                 else:
                     continue
 
     return result_image
 
 
-def _apply_dog_nose(image, best_nose, face_position):
-    (nose_x,nose_y,nose_width,nose_height) = best_nose
+def _apply_dog_nose(image, best_nose, face_position, angle = 0):
+    (nose_x,nose_y,nose_width,nose_height) = best_nose  
     (face_x, face_y, face_width, face_height) = face_position
 
     result_image = image.copy()
 
-    dog_nose = cv2.imread(parameters.MasksPaths.DogNose, cv2.IMREAD_COLOR)
+    dog_nose = cv2.imread(parameters.MasksPaths.DogNose, cv2.IMREAD_UNCHANGED)
 
 
     reshaped_nose= cv2.resize(dog_nose, (nose_width, nose_height ))
+
+    rows, cols, _ = reshaped_nose.shape
+    M = cv2.getRotationMatrix2D ((cols/2, rows/2), (-angle*180/math.pi)*0.85, 1)
+    reshaped_nose = cv2.warpAffine(reshaped_nose, M, (cols, rows))
 
     # print("[image shape {}]chan {} to {} || row {} to {} || col {} to {}\n".format(reshaped_nose.shape, 0,image.shape[-1], 0, nose_width, 0, nose_height  ))
     # print(face_x + nose_x , ",",face_x + nose_x + nose_width)        
@@ -141,7 +149,7 @@ def _apply_dog_nose(image, best_nose, face_position):
         for row in range( 0,   nose_height):
             for col in range(0, nose_width ):
                 # # print('index {},{},{} \n'.format(row,col,channel))
-                if reshaped_nose[row][col][channel] < 200:
+                if reshaped_nose[row][col][3] > 250:
                     result_image[face_y + nose_y + row ][face_x + nose_x  + col ][channel] = reshaped_nose[row][col][channel]
                 else:
                     continue
