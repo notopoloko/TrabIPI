@@ -66,16 +66,12 @@ def apply_flowers(image,  face_position, angle = 0):
     result_image = image.copy()
 
     flowers = cv2.imread(parameters.MasksPaths.Flowers, cv2.IMREAD_UNCHANGED)
-    pink_background = cv2.imread(parameters.MasksPaths.PinkGradient, cv2.IMREAD_COLOR)
     
     reshaped_flowers = cv2.resize(flowers, (face_width, face_height//2))
-    reshaped_pink_background = cv2.resize(pink_background,  (image.shape[1], image.shape[0]))
        
     rows, cols, _ = reshaped_flowers.shape
     M = cv2.getRotationMatrix2D ((cols/2, rows/2), (-angle*180/math.pi)*0.85, 1)
     reshaped_flowers = cv2.warpAffine(reshaped_flowers, M, (cols, rows))
-
-    result_image = cv2.addWeighted(result_image, 0.6, reshaped_pink_background, 0.4, 0)
     
     # print(face_y)
     for channel in range(0,image.shape[-1]):
@@ -112,7 +108,7 @@ def _apply_dog_ears(image,  face_position):
     dog_ears = cv2.imread(parameters.MasksPaths.DogEars, cv2.IMREAD_UNCHANGED)
     
     reshaped_ears = cv2.resize(dog_ears, (face_width, face_height//3 ))
-        
+
     # print(face_y)
     for channel in range(0,image.shape[-1]):
         for row in range( 0,   face_height//3):

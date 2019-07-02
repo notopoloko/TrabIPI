@@ -3,6 +3,7 @@ import os
 import math
 from config import parameters
 import filters
+import effects
 
 
 face_cascade = cv2.CascadeClassifier('../opencv/haarcascades/haarcascade_frontalface_default.xml')
@@ -16,7 +17,7 @@ if __name__ == '__main__':
 
     images_dataset = os.listdir(parameters.IMG_DIR)
 
-    for img in images_dataset[:]:
+    for img in images_dataset[:2]:
 
         img_full_name = parameters.IMG_DIR + img
 
@@ -24,9 +25,8 @@ if __name__ == '__main__':
         colored_image = cv2.imread(img_full_name, cv2.IMREAD_COLOR)
         colored_image = cv2.resize(colored_image, None, fx=0.2,fy=0.15) 
 
-
         faces = face_cascade.detectMultiScale(colored_image, 1.1, 5) 
-        print(faces,faces)
+        print( faces )
         for face_position in faces: 
             (face_x, face_y, face_width, face_height) = face_position
             # cv2.rectangle(colored_image,(face_x, face_y),(face_x + face_width, face_y + face_height), parameters.Colors.Red, 2) 
@@ -67,12 +67,14 @@ if __name__ == '__main__':
                 # cv2.rectangle(colored_image,(face_x + nose_x ,face_y + nose_y),(face_x + nose_x +nose_width , face_y + nose_y+nose_height),parameters.Colors.Green,2) 
             except Exception as e:
                 pass
-            cv2.imshow('colored_image',colored_image) 
-            cv2.waitKey(0)  
+            # cv2.imshow('colored_image',colored_image) 
+            # cv2.waitKey(0)
             try:
                 result = colored_image.copy()
 
                 result = filters.apply_flowers(result, face_position, angle)
+                result = effects.applyEffect(result, face_position)
+                cv2.imshow('colored_image',result) 
                 # result = filters.apply_glass(result, eye_position, face_position)
                 # result = filters.apply_dog_mask(result, best_nose, face_position, angle)
                 
@@ -81,7 +83,6 @@ if __name__ == '__main__':
                 print('deu ruim', e)
                 result =  colored_image
             
-        cv2.imshow('colored_image',result) 
         cv2.waitKey(0)
 
 
