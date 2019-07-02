@@ -35,9 +35,13 @@ def applyEffectWithBackGround(image, faceRegion, background):
     image[:,:,2] = cv2.multiply(image[:,:,2], 1.0 - a, dtype=cv2.CV_8UC1)
 
     reshaped_background = cv2.resize(background,  (image.shape[1], image.shape[0]))
-
-    image[:,:,0] += cv2.multiply(reshaped_background[:,:,0], a, dtype=cv2.CV_8UC1)
-    image[:,:,1] += cv2.multiply(reshaped_background[:,:,1], a, dtype=cv2.CV_8UC1)
-    image[:,:,2] += cv2.multiply(reshaped_background[:,:,2], a, dtype=cv2.CV_8UC1)
+    # Controle do efeito de sera aplicada na image. Vai de 0 até 0.99
+    controleEfeito = 0.3
+    image[:,:,0] += cv2.multiply(reshaped_background[:,:,0], a - controleEfeito, dtype=cv2.CV_8UC1)
+    image[:,:,1] += cv2.multiply(reshaped_background[:,:,1], a - controleEfeito, dtype=cv2.CV_8UC1)
+    image[:,:,2] += cv2.multiply(reshaped_background[:,:,2], a - controleEfeito, dtype=cv2.CV_8UC1)
 
     return image
+
+def applyBlurOnImage(image, faceRegion):
+    return cv2.blur(image, (5,5))

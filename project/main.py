@@ -73,16 +73,18 @@ if __name__ == '__main__':
                 result = colored_image.copy()
 
                 result = filters.apply_flowers(result, face_position, angle)
-                result = effects.applyEffectWithoutBackGround(result, face_position)
-                cv2.imshow('Sem background',result)
-                cv2.waitKey(0)
+                # result = filters.apply_glass(result, eye_position, face_position)
+                # result = filters.apply_dog_mask(result, best_nose, face_position, angle)
+
+                # result = effects.applyEffectWithoutBackGround(result, face_position)
+                # cv2.imshow('Sem background',result)
+                # cv2.waitKey(0)
 
                 pink_background = cv2.imread(parameters.MasksPaths.PinkGradient, cv2.IMREAD_COLOR)
                 result = effects.applyEffectWithBackGround(result, face_position, pink_background)
+                # result = effects.applyBlurOnImage(result, face_position)
                 cv2.imshow('Com background',result)
                 cv2.waitKey(0)
-                # result = filters.apply_glass(result, eye_position, face_position)
-                # result = filters.apply_dog_mask(result, best_nose, face_position, angle)
                 
 
             except Exception as e:
