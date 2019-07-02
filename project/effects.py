@@ -3,22 +3,41 @@ from config import parameters
 import numpy as np
 
 # definir logica de aplicacao de efeito
-def applyEffect(image, faceRegion):
+def applyEffectWithoutBackGround(image, faceRegion):
+    # Retira a regiao da face e calcula a distancia 
     (face_x, face_y, face_width, face_height) = faceRegion
-
     white_image = 255*np.ones(shape = [image.shape[0], image.shape[1], 1], dtype=np.uint8)
-
     white_image[face_y:face_y + face_height, face_x:face_x + face_width] = np.zeros(shape = [face_height, face_width, 1], dtype=np.uint8)
-
     a = cv2.distanceTransform(white_image, cv2.DIST_L2, 5)
-    # a = cv2.normalize(a, 0, 1., cv2.NORM_MINMAX)
+    a = cv2.normalize(a, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
 
-    cv2.imshow('something',a)
-    cv2.waitKey(0)
+    # print(image.shape,a.shape)
+    # Multiplica cada elemento da imagem pelo seu peso correspondente
+    image[:,:,0] = cv2.multiply(image[:,:,0], 1.0 - a, dtype=cv2.CV_8UC1)
+    image[:,:,1] = cv2.multiply(image[:,:,1], 1.0 - a, dtype=cv2.CV_8UC1)
+    image[:,:,2] = cv2.multiply(image[:,:,2], 1.0 - a, dtype=cv2.CV_8UC1)
 
-    pink_background = cv2.imread(parameters.MasksPaths.PinkGradient, cv2.IMREAD_COLOR)
+    # Já possui um efeito bom aqui
+    # print(image.max())
+    # cv2.imshow('something',image)
+    # cv2.waitKey(0)
+    return image
 
-    reshaped_pink_background = cv2.resize(pink_background,  (image.shape[1], image.shape[0]))
+def applyEffectWithBackGround(image, faceRegion, background):
+    (face_x, face_y, face_width, face_height) = faceRegion
+    white_image = 255*np.ones(shape = [image.shape[0], image.shape[1], 1], dtype=np.uint8)
+    white_image[face_y:face_y + face_height, face_x:face_x + face_width] = np.zeros(shape = [face_height, face_width, 1], dtype=np.uint8)
+    a = cv2.distanceTransform(white_image, cv2.DIST_L2, 5)
+    a = cv2.normalize(a, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
 
-    result_image = cv2.addWeighted(image, 0.6, reshaped_pink_background, 0.4, 0)
-    return result_image
+    image[:,:,0] = cv2.multiply(image[:,:,0], 1.0 - a, dtype=cv2.CV_8UC1)
+    image[:,:,1] = cv2.multiply(image[:,:,1], 1.0 - a, dtype=cv2.CV_8UC1)
+    image[:,:,2] = cv2.multiply(image[:,:,2], 1.0 - a, dtype=cv2.CV_8UC1)
+
+    reshaped_background = cv2.resize(background,  (image.shape[1], image.shape[0]))
+
+    image[:,:,0] += cv2.multiply(reshaped_background[:,:,0], a, dtype=cv2.CV_8UC1)
+    image[:,:,1] += cv2.multiply(reshaped_background[:,:,1], a, dtype=cv2.CV_8UC1)
+    image[:,:,2] += cv2.multiply(reshaped_background[:,:,2], a, dtype=cv2.CV_8UC1)
+
+    return image

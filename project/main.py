@@ -17,7 +17,7 @@ if __name__ == '__main__':
 
     images_dataset = os.listdir(parameters.IMG_DIR)
 
-    for img in images_dataset[:2]:
+    for img in images_dataset[1:2]:
 
         img_full_name = parameters.IMG_DIR + img
 
@@ -73,8 +73,14 @@ if __name__ == '__main__':
                 result = colored_image.copy()
 
                 result = filters.apply_flowers(result, face_position, angle)
-                result = effects.applyEffect(result, face_position)
-                cv2.imshow('colored_image',result) 
+                result = effects.applyEffectWithoutBackGround(result, face_position)
+                cv2.imshow('Sem background',result)
+                cv2.waitKey(0)
+
+                pink_background = cv2.imread(parameters.MasksPaths.PinkGradient, cv2.IMREAD_COLOR)
+                result = effects.applyEffectWithBackGround(result, face_position, pink_background)
+                cv2.imshow('Com background',result)
+                cv2.waitKey(0)
                 # result = filters.apply_glass(result, eye_position, face_position)
                 # result = filters.apply_dog_mask(result, best_nose, face_position, angle)
                 
@@ -83,7 +89,7 @@ if __name__ == '__main__':
                 print('deu ruim', e)
                 result =  colored_image
             
-        cv2.waitKey(0)
+        # cv2.waitKey(0)
 
 
 
