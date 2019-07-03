@@ -5,7 +5,7 @@ import math
 
 def select_best_eyes_on_face(eyes):
 
-        return eyes
+        return eyes[:1]
 
 def findBestTwoEyes (image_slot, eyes_cadidates):
     return eyes_cadidates
@@ -105,10 +105,10 @@ def apply_harry_potter_mask(image, eye_position, face_position, angle = 0):
     except Exception as e:  
         print('teste2')
 
-    try:
-        result_image = _apply_hp_scarf(result_image,  face_position)
-    except Exception as e:  
-        print('teste3')
+    # try:
+    #     result_image = _apply_hp_scarf(result_image,  face_position)
+    # except Exception as e:  
+    #     print('teste3')
         
 
     return result_image
@@ -128,7 +128,7 @@ def _apply_dog_ears(image,  face_position):
         for row in range( 0,   face_height//3):
             for col in range(0, face_width ):
                 if reshaped_ears[row][col][3] >250:
-                    result_image[min(face_y  + row - (math.ceil(face_height*0.2)), image.shape[0]-1) ][min(face_x   + col , image.shape[1]-1) ][channel] = reshaped_ears[row][col][channel]
+                    result_image[max(face_y  + row - (math.ceil(face_height*0.2)), 0) ][max(face_x   + col , 0) ][channel] = reshaped_ears[row][col][channel]
                 else:
                     continue
 
@@ -168,8 +168,10 @@ def apply_dog_mask(image, best_nose, face_position, angle = 0):
       result_image = _apply_dog_ears(image,  face_position)
     except Exception as e:
         print(e)
-
-    result_image = _apply_dog_nose(result_image, best_nose, face_position, angle)
+    try:
+        result_image = _apply_dog_nose(result_image, best_nose, face_position, angle)
+    except Exception as e:
+        print(e)
 
     return result_image
 
@@ -186,7 +188,7 @@ def _apply_hp_glasses(image, eye_position, face_position, angle ):
     reshaped_hp_glasses = cv2.resize(hp, (eye_width, eye_height ))
 
     rows, cols, _ = reshaped_hp_glasses.shape
-    M = cv2.getRotationMatrix2D ((cols/2, rows/2), (-angle*180/math.pi)*0.85, 1)
+    M = cv2.getRotationMatrix2D ((cols/2, rows/2), (-angle*180/math.pi), 1)
     reshaped_hp_glasses = cv2.warpAffine(reshaped_hp_glasses, M, (cols, rows))
 
     

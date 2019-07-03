@@ -37,7 +37,7 @@ def applyEffectWithBackGround(image, faceRegion, background):
 
     reshaped_background = cv2.resize(background,  (image.shape[1], image.shape[0]))
     # Controle do efeito de sera aplicada na image. Vai de 0 até 0.99
-    controleEfeito = 0.3
+    controleEfeito = 0.1
     image[:,:,0] += cv2.multiply(reshaped_background[:,:,0], a - controleEfeito, dtype=cv2.CV_8UC1)
     image[:,:,1] += cv2.multiply(reshaped_background[:,:,1], a - controleEfeito, dtype=cv2.CV_8UC1)
     image[:,:,2] += cv2.multiply(reshaped_background[:,:,2], a - controleEfeito, dtype=cv2.CV_8UC1)
