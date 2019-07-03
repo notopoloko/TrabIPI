@@ -2,6 +2,7 @@ import cv2
 from config import parameters
 import numpy as np
 
+
 # definir logica de aplicacao de efeito
 def applyEffectWithoutBackGround(image, faceRegion):
     # Retira a regiao da face e calcula a distancia 
@@ -53,3 +54,22 @@ def applyBlurOutsideFace(image, faceRegion):
 
     # print(face_x, image.shape[0])
     return image
+
+def applyBlurOutsideFace(image, faceRegion):
+    (face_x, face_y, face_width, face_height) = faceRegion
+
+    image[0: image.shape[0], 0:face_x] = cv2.blur(image[ 0: image.shape[0], 0:face_x ], (3,3))
+    image[0: face_y, face_x: image.shape[1]] = cv2.blur(image[ 0: face_y, face_x: image.shape[1] ], (3,3))
+    image[face_y+face_height: image.shape[0], face_x:image.shape[1]] = cv2.blur(image[ face_y+face_height: image.shape[0], face_x:image.shape[1] ], (3,3))
+    image[face_y: face_y + face_height, face_x + face_width:image.shape[1] ] = cv2.blur(image[ face_y: face_y + face_height, face_x + face_width:image.shape[1] ], (3,3))
+
+    # print(face_x, image.shape[0])
+    return image
+
+# def applyEnlargeEye(image, rEye, lEye):
+#     (r_eye_x, r_eye_y, r_eye_width, r_eye_height) = rEye
+#     (l_eye_x, l_eye_y, l_eye_width, l_eye_height) = lEye
+
+#     image[]
+#     return image
+

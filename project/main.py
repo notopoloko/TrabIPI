@@ -17,7 +17,7 @@ if __name__ == '__main__':
 
     images_dataset = os.listdir(parameters.IMG_DIR)
 
-    for img in images_dataset[1:2]:
+    for img in images_dataset[2:3]:
 
         img_full_name = parameters.IMG_DIR + img
 
@@ -29,7 +29,8 @@ if __name__ == '__main__':
         print( faces )
         for face_position in faces: 
             (face_x, face_y, face_width, face_height) = face_position
-            # cv2.rectangle(colored_image,(face_x, face_y),(face_x + face_width, face_y + face_height), parameters.Colors.Red, 2) 
+
+            cv2.rectangle(colored_image,(face_x, face_y),(face_x + face_width, face_y + face_height), parameters.Colors.Red, 2) 
             face_slot = colored_image[face_y:face_y + face_height, face_x:face_x + face_width] 
             
             eyes = eye_cascade.detectMultiScale(face_slot,1.1,4) 
@@ -53,12 +54,19 @@ if __name__ == '__main__':
                 best_nose = filters.select_best_nose_on_face(face_position,noses = noses)
             else:
                 best_nose = None
+            # try:
+            #     (eye_x,eye_y,eye_width,eye_height) = eyes[0]
+            #     cv2.rectangle(colored_image,(face_x + eye_x ,face_y + eye_y),(face_x + eye_x +eye_width ,face_y + eye_y+eye_height),parameters.Colors.Red,2) 
+            # except Exception as e:
+            #     pass
+            
             best_eyes = filters.select_best_eyes_on_face(eyes= eyes)
             # noseModified = filters.apply_dog_nose(best_nose)
-
+            
+            eye_position = None
             for eye_position in best_eyes:
                 (eye_x,eye_y,eye_width,eye_height) = eye_position
-                
+
                 # cv2.rectangle(colored_image,(face_x + eye_x ,face_y + eye_y),(face_x + eye_x +eye_width ,face_y + eye_y+eye_height),parameters.Colors.Blue,2) 
 
             try:

@@ -11,6 +11,11 @@ class MasksPaths():
     BreadFace = MASK_DIR + '/bread/bread_face.png'
     Flowers = MASK_DIR + '/flowers/flowers.png'
     PinkGradient = MASK_DIR + '/flowers/pink_background.png'
+    Hp = MASK_DIR + '/hp/hp.png'
+    HpThunder = MASK_DIR + '/hp/hp_thunder.png'
+    HpScarf = MASK_DIR + '/hp/hp_scarf.png'
+
+
     
 class Colors():
     Blue = (255,0,0)
@@ -20,3 +25,4 @@ class Colors():
 
 class MaskTypes(Enum):
     Dog = 1
+    HpScarf = 2
