@@ -17,7 +17,7 @@ if __name__ == '__main__':
 
     images_dataset = os.listdir(parameters.IMG_DIR)
 
-    for img in images_dataset[1:2]:
+    for img in images_dataset[5:6]:
 
         img_full_name = parameters.IMG_DIR + img
 
@@ -29,7 +29,8 @@ if __name__ == '__main__':
         print( faces )
         for face_position in faces: 
             (face_x, face_y, face_width, face_height) = face_position
-            # cv2.rectangle(colored_image,(face_x, face_y),(face_x + face_width, face_y + face_height), parameters.Colors.Red, 2) 
+
+            cv2.rectangle(colored_image,(face_x, face_y),(face_x + face_width, face_y + face_height), parameters.Colors.Red, 2) 
             face_slot = colored_image[face_y:face_y + face_height, face_x:face_x + face_width] 
             
             eyes = eye_cascade.detectMultiScale(face_slot,1.1,4) 
@@ -53,6 +54,12 @@ if __name__ == '__main__':
                 best_nose = filters.select_best_nose_on_face(face_position,noses = noses)
             else:
                 best_nose = None
+            # try:
+            #     (eye_x,eye_y,eye_width,eye_height) = eyes[0]
+            #     cv2.rectangle(colored_image,(face_x + eye_x ,face_y + eye_y),(face_x + eye_x +eye_width ,face_y + eye_y+eye_height),parameters.Colors.Red,2) 
+            # except Exception as e:
+            #     pass
+            
             best_eyes = filters.select_best_eyes_on_face(eyes= eyes)
             # noseModified = filters.apply_dog_nose(best_nose)
 
@@ -72,18 +79,18 @@ if __name__ == '__main__':
             try:
                 result = colored_image.copy()
 
-                result = filters.apply_flowers(result, face_position, angle)
-                result = effects.applyEffectWithoutBackGround(result, face_position)
-                cv2.imshow('Sem background',result)
-                cv2.waitKey(0)
+                # result = filters.apply_flowers(result, face_position, angle)
+                # result = effects.applyEffectWithoutBackGround(result, face_position)
+                # cv2.imshow('Sem background',result)
+                # cv2.waitKey(0)
 
-                pink_background = cv2.imread(parameters.MasksPaths.PinkGradient, cv2.IMREAD_COLOR)
-                result = effects.applyEffectWithBackGround(result, face_position, pink_background)
+                # pink_background = cv2.imread(parameters.MasksPaths.PinkGradient, cv2.IMREAD_COLOR)
+                result = effects.applyBlurOutsideFace(result, face_position)
+                result = filters.apply_harry_potter_mask(result, eye_position, face_position, angle = 0)
+                # result = filters.apply_dog_mask(result, best_nose, face_position, angle = 0)
+                # result = filters.apply_dog_mask(result, best_nose, face_position, angle)
                 cv2.imshow('Com background',result)
                 cv2.waitKey(0)
-                # result = filters.apply_glass(result, eye_position, face_position)
-                # result = filters.apply_dog_mask(result, best_nose, face_position, angle)
-                
 
             except Exception as e:
                 print('deu ruim', e)
