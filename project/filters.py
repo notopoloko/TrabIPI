@@ -96,10 +96,20 @@ def apply_flowers(image,  face_position, angle = 0):
 
 def apply_harry_potter_mask(image, eye_position, face_position, angle = 0):
     result_image = image.copy()
+    try:
+        result_image = _apply_hp_glasses(result_image, eye_position, face_position, angle)
+    except Exception as e:  
+        print('teste1')
+    try:
+        result_image = _apply_hp_thunder(result_image, eye_position, face_position)
+    except Exception as e:  
+        print('teste2')
 
-    result_image = _apply_hp_glasses(result_image, eye_position, face_position, angle)
-    result_image = _apply_hp_thunder(result_image, eye_position, face_position)
-    result_image = _apply_hp_scarf(result_image,  face_position)
+    try:
+        result_image = _apply_hp_scarf(result_image,  face_position)
+    except Exception as e:  
+        print('teste3')
+        
 
     return result_image
 

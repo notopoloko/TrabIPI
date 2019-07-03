@@ -17,7 +17,7 @@ if __name__ == '__main__':
 
     images_dataset = os.listdir(parameters.IMG_DIR)
 
-    for img in images_dataset[5:6]:
+    for img in images_dataset[2:3]:
 
         img_full_name = parameters.IMG_DIR + img
 
@@ -62,10 +62,11 @@ if __name__ == '__main__':
             
             best_eyes = filters.select_best_eyes_on_face(eyes= eyes)
             # noseModified = filters.apply_dog_nose(best_nose)
-
+            
+            eye_position = None
             for eye_position in best_eyes:
                 (eye_x,eye_y,eye_width,eye_height) = eye_position
-                
+
                 # cv2.rectangle(colored_image,(face_x + eye_x ,face_y + eye_y),(face_x + eye_x +eye_width ,face_y + eye_y+eye_height),parameters.Colors.Blue,2) 
 
             try:
@@ -85,7 +86,7 @@ if __name__ == '__main__':
                 # cv2.waitKey(0)
 
                 # pink_background = cv2.imread(parameters.MasksPaths.PinkGradient, cv2.IMREAD_COLOR)
-                result = effects.applyBlurOutsideFace(result, face_position)
+                # result = effects.applyBlurOutsideFace(result, face_position)
                 result = filters.apply_harry_potter_mask(result, eye_position, face_position, angle = 0)
                 # result = filters.apply_dog_mask(result, best_nose, face_position, angle = 0)
                 # result = filters.apply_dog_mask(result, best_nose, face_position, angle)
