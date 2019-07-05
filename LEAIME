@@ -1,0 +1,24 @@
+Projeto final de IPI
+
+Yuri Castro do Amaral 14/0033718
+
+Requisitos para o projeto :
+    Python3 instalando
+    Bibliotecas:
+        Python-Opencv (cv2)
+        Numpy
+
+A pasta enviada contem o relatório em PDF e a pasta com o Projeto
+
+Na raiz do projeto, coloque as imagens que deseja aplicar os efeitos no diretorio /imgs 
+Na raiz do projeto, navegue ate a pasta /project e execute o programa da seguinte forma:
+
+python main.py --image <nome da imagem SEM path> --type <numero do tipo da mascara>
+
+As máscaras podem ser:
+    1 - Cachorrinho e Blur
+    2 - Harry Potter
+    3 - Flores e fundo Rosa
+Um exemplo de execução para a imagem 94a.jpg com mascara de cachoro é:
+                    python main.py -i teste.jpg -t 1
+O programa exibirá a imagem lida e ,depois de apertar a tecla "enter", o resultado final
